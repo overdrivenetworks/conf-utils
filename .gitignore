@@ -1,3 +1,4 @@
 *.conf
 *.rules
 *.motd
+scripts/config.sh
