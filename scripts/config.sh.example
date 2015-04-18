@@ -1,0 +1,24 @@
+# This defines the order that files in the root directory will be processed:
+# $1 refers to the server name.
+# You will need to change this if you use a different configuration style on your network.
+getconfig () {
+  # Concatenate files together in the following order:
+  cat global.conf
+  cat modules.conf
+  cat $1.links.conf
+  cat cgiirc.conf
+  cat auth-ex.conf
+  cat opers.conf
+  cat $1.serverinfo.conf
+  cat helpop.conf
+  cat alias.conf
+  cat dnsbl.conf
+}
+
+# Server suffix to decorate the script output (this doesn't actually affect how the
+# files are processed).
+export serversuffix=overdrive.pw
+
+# Declare any servers and options here. You can use SSH custom ports, etc. for example.
+declare -A options=([server1]="-P 12345")
+declare -A servers=([server1]="ircd@server1.somenet.net" [server2]="username@server2.yournet.net")
