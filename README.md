@@ -30,10 +30,10 @@ and ircd.rules), and server addresses are stored in `scripts/config.sh`.
 **Git viewers: rename `scripts/config.sh.example` to `scripts/config.sh` and
 write your configuration there!**
 
-All scripts depend on automated/passwordless SSH logins, so you will need to run
-them from a machine that has SSH access to the target servers. Also,
-the target servers require that the IRCd configuration directory be set to
-`~/inspircd/etc` (yes, this strays from the default, so pay attention)!
+All scripts **depend on automated/passwordless SSH logins**, so you will need to run
+them from a machine that has SSH access to the target servers. Also, this **requires**
+that the target servers have their IRCd configuration directory set to
+**`~/inspircd/etc`** (yes, this strays from the default, so pay attention)!
 
 ## License
 
