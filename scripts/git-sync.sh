@@ -16,7 +16,11 @@ csync () {
 	rm tmp/$1.conf
 }
 
-for server in "${!servers[@]}"
-do
-   csync "$server"
-done
+if [[ -z $1 ]]; then
+	for server in "${!servers[@]}"
+	do
+		csync "$server"
+	done
+else
+	csync "$1"
+fi
