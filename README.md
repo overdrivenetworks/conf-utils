@@ -1,7 +1,8 @@
-OVERdrive-IRC Network Configuration
+conf-sync
 ===================
 
-SCP-based network configuration for the OVERdrive-IRC network.
+conf-sync is an SCP-based IRCd configuration syncer used by the OVERdrive-IRC network.
+It currently targets InspIRCd 2.0.x.
 
 ## Instructions
 First, configure your instance by renaming `scripts/config.sh.example` to `scripts/config.sh`.
@@ -21,15 +22,10 @@ are merged in this order as `~/inspircd/etc/inspircd.conf` on target servers
  * alias.conf
  * dnsbl.conf
 
-Once you're done changing things, run `scripts/git-sync.sh`
-to push your changes. You will have to run `/rehash *` after for them
-to take effect.
-
-MOTD syncing is done via `scripts/motd.sh` (it will write `<servername>`.motd
-and ircd.rules), and server addresses are stored in `scripts/config.sh`.
-
-**Git viewers: rename `scripts/config.sh.example` to `scripts/config.sh` and
-write your configuration there!**
+Once you're done changing things, run `scripts/git-sync.sh` to push your changes.
+You will have to run rehash your servers manually after for them to take effect.
+MOTD syncing is done via `scripts/motd.sh`, which will write `<servername>.motd`
+and `ircd.rules` in the target directory.
 
 All scripts **require passwordless SSH access**, so you will need to run
 them from a machine that has SSH access to the target servers.

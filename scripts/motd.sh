@@ -5,8 +5,8 @@
 
 motdsync () {
 	echo "Sync MOTD: $1.$serversuffix"
-	scp ${options[$1]} $1.motd ${servers[$1]}:~/inspircd/etc/ircd.motd
-	scp ${options[$1]} ircd.rules ${servers[$1]}:~/inspircd/etc/ircd.rules
+	scp ${options[$1]} $1.motd ${servers[$1]}:${targetpath}/ircd.motd
+	scp ${options[$1]} ircd.rules ${servers[$1]}:${targetpath}/ircd.rules
 }
 
 for server in "${!servers[@]}"

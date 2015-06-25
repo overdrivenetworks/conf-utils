@@ -12,7 +12,7 @@ mkdir -p tmp/
 csync () {
 	echo "Sync: $1.$serversuffix"
 	getconfig $1 > tmp/$1.conf
-	scp ${options[$1]} tmp/$1.conf ${servers[$1]}:~/inspircd/etc/inspircd.conf
+	scp ${options[$1]} tmp/$1.conf ${servers[$1]}:${targetpath}/inspircd.conf
 	rm tmp/$1.conf
 }
 

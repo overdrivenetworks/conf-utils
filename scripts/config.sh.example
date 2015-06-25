@@ -15,9 +15,12 @@ getconfig () {
   cat dnsbl.conf
 }
 
-# Server suffix to decorate the script output (this doesn't actually affect how the
-# files are processed).
+# Server suffix: this doesn't actually affect how the files are processed, but
+# is just there for decoration.
 export serversuffix=overdrive.pw
+
+# Sets the target conf dir for remote servers (where we will push our configs).
+export targetpath="~/inspircd/etc/"
 
 # Declare any servers and options here. You can use SSH custom ports, etc. for example.
 declare -A options=([server1]="-P 12345")
