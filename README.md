@@ -30,6 +30,16 @@ and `ircd.rules` in the target directory.
 All scripts **require passwordless SSH access**, so you will need to run
 them from a machine that has SSH access to the target servers.
 
+### Extra Utilities
+
+conf-sync also bundles a few scripts that may help server management:
+
+* **scripts/makelink.py**: a link block generator between servers.
+   - Usage: `scripts/makelink.py <server1> <server2> [<server3> ...]`
+* **scripts/passwd.py**: random password generator.
+   - Usage: `scripts/passwd.py [<passwordlength>]`
+   - If `<passwordlength>` is not specified, it defaults to 16.
+
 ## License
 
 Copyright (c) 2014-2015 OVERdrive-IRC Development Team

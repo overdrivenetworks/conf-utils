@@ -2,3 +2,6 @@
 *.rules
 *.motd
 scripts/config.sh
+
+__pycache__/
+*.py[cod]
