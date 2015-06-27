@@ -83,7 +83,7 @@ if __name__ == '__main__':
         # Add the reverse too. The reason we don't use permutations()
         # is so the password pair stays the same.
         print('Adding to %s.links.conf:' % target)
-        L = linkblock(target, password)
+        L = linkblock(source, password)
         print(L)
         with open('%s.links.conf' % target, 'a') as f:
             f.write(L)
