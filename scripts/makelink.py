@@ -17,8 +17,11 @@ def getip(server):
         # Try to grab the IP of the server from the relevant serverinfo.conf.
         # In this case, we only want what looks like IPv4 addresses.
         with open('%s.serverinfo.conf' % server) as f:
-            m = re.search(r'\<bind address="([0-9\.]+)"', f.read())
-            ip = m.group(1)
+            data = f.read()
+            bind = re.search(r'\<bind address="([0-9\.]+)"', data)
+            ip = bind.group(1)
+            hostname = re.search(r'\<server name="(.+?)"', data)
+            hostname = hostname.group(1)
     except (OSError, AttributeError):
         # That didn't work (probably because we're using a wildcard bind for the server)
         # Try resolving the hostname instead.
@@ -38,11 +41,11 @@ def getip(server):
                     sys.exit(3)
                 else:
                     break
-    return ip
+    return (ip, hostname)
 
 def linkblock(targetserver, password):
     s = """
-<link name="{targetserver}.overdrive.pw"
+<link name="{hostname}"
     ipaddr="{serverip}"
     allowmask="{serverip}"
     port="7001"
@@ -52,7 +55,7 @@ def linkblock(targetserver, password):
     hidden="no"
     sendpass="{password}"
     recvpass="{password}">
-""".format(password=password, targetserver=targetserver, serverip=serverips[targetserver])
+""".format(password=password, hostname=serverips[targetserver][1], serverip=serverips[targetserver][0])
     return s
 
 
