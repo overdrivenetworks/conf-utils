@@ -9,7 +9,12 @@ motdsync () {
 	scp ${options[$1]} ircd.rules ${servers[$1]}:${targetpath}/ircd.rules
 }
 
-for server in "${!servers[@]}"
-do
-   motdsync "$server"
-done
+if [[ -z $1 ]]; then
+	for server in "${!servers[@]}"
+	do
+		motdsync "$server"
+	done
+else
+	motdsync "$1"
+fi
+
