@@ -15,10 +15,6 @@ getconfig () {
   cat dnsbl.conf
 }
 
-# Server suffix: this doesn't actually affect how the files are processed, but
-# is just there for decoration.
-export serversuffix=overdrive.pw
-
 # Sets the target conf dir for remote servers (where we will push our configs).
 export targetpath="~/inspircd/etc/"
 
