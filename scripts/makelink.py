@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# You should configure this string to be whatever your IRCd names end with.
+serversuffix = "overdrivenetworks.com"
+
 import os
 import sys
 import itertools
@@ -13,21 +16,36 @@ servers = sys.argv[1:]
 curdir = os.path.dirname(os.path.abspath(__file__))
 
 def getip(server):
+
+    # Try to grab the hostname and IP of the server from the relevant xyz.serverinfo.conf.
     try:
-        # Try to grab the IP of the server from the relevant serverinfo.conf.
+        f = open('%s.serverinfo.conf' % server)
+        data = f.read()
+    except OSError:
+        print("debug: %s.serverinfo.conf missing!" % server)
+        data = ''
+
+    try:
         # In this case, we only want what looks like IPv4 addresses.
-        with open('%s.serverinfo.conf' % server) as f:
-            data = f.read()
-            bind = re.search(r'\<bind address="([0-9\.]+)"', data)
-            ip = bind.group(1)
-            hostname = re.search(r'\<server name="(.+?)"', data)
-            hostname = hostname.group(1)
-    except (OSError, AttributeError):
+        hostname = re.search(r'\<server name="(.+?)"', data)
+        hostname = hostname.group(1)
+        print("debug: hostname for %s found: %s" % (server, hostname))
+    except AttributeError:
+        # Couldn't read the serverinfo.conf file, try resolving the hostname instead.
+        hostname = '%s.%s' % (server, serversuffix)
+        print("debug: Failed to find hostname for %s, using default value of %s instead..." % (server, hostname))
+
+
+    try:  # Ditto with the IP address.
+        bind = re.search(r'\<bind address="([0-9\.]+)"', data)
+        ip = bind.group(1)
+        print("debug: IP for %s found: %s" % (server, ip))
+    except AttributeError:
         # That didn't work (probably because we're using a wildcard bind for the server)
-        # Try resolving the hostname instead.
-        hostname = '%s.overdrive.pw' % server
+        # So, try resolving the hostname we found.
         try:
             ip = socket.gethostbyname(hostname)
+            print("debug: IP for %s found (by resolving hostname %s): %s" % (server, hostname, ip))
         except socket.error:
             # That failed too. Ask for input.
             while True:
@@ -75,6 +93,7 @@ for server in map(str.lower, servers):
 
 if __name__ == '__main__':
     print("Server IP index: %s" % serverips)
+    print()
     for serverpair in itertools.combinations(servers, 2):
         source, target = serverpair
         password = passwd.passwd(50)
