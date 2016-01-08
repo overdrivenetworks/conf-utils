@@ -1,0 +1,35 @@
+\x0310\\\\   _____     _______ ____     _      _            //
+\x0311||  / _ \\ \\   / / ____|  _ \\ __| |_ __(_)_   _____  ||
+\x0310|| | | | \\ \\ / /|  _| | |_) / _` | '__| \\ \\ / / _ \\ ||
+\x0311|| | |_| |\\ V / | |___|  _ < (_| | |  | |\\ V /  __/ ||
+\x0310||  \\___/  \\_/  |_____|_| \\_\\__,_|_|  |_| \\_/ \\___| ||
+\x0311//                                   Pave the way.  \\\\
+
+\x02+- \x1fNetwork Information\x1f\x02
+
+     Round Robin: \x1firc.overdrivenetworks.com\x1f
+         Website: \x1fhttps://ircnet.overdrivenetworks.com/\x1f
+  Current Server: \x1f\x02%(servername)s\x02\x1f
+        Location: %(location)s
+Server Operators: %(ops)s
+           Ports: 6667-6669, 9998 (plain) / +6697-6699, +9999 (SSL)
+
+\x02+- \x1fChannels of Interest\x1f\x02
+
+            Social: \x02#chat\x02
+Code & Development: \x02#dev
+   Network Support: \x02#Help\x02
+
+\x02+- \x1fOther Information\x1f\x02
+
+ * For a list of available staff, type \x02/stats P\x02 in your
+   IRC client.
+
+ * Please note that the use of this IRC network is a
+   privilege, not a right. OVERdrive-IRC staff reserves the
+   right to remove users from this network at any time for
+   any reason.
+
+ * You can find our network AUP at
+   \x1fhttps://ircnet.overdrivenetworks.com/aup\x1f.
+
