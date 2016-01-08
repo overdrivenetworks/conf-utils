@@ -19,8 +19,8 @@ def getip(server):
 
     # Try to grab the hostname and IP of the server from the relevant xyz.serverinfo.conf.
     try:
-        f = open('%s.serverinfo.conf' % server)
-        data = f.read()
+        with open('%s.serverinfo.conf' % server) as f:
+            data = f.read()
     except OSError:
         print("debug: %s.serverinfo.conf missing!" % server)
         data = ''
