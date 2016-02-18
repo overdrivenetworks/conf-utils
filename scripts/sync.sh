@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ `git symbolic-ref --short -q HEAD` != master ]] && [[ $1 != "force" ]]; then
-	echo "Aborting sync since we're not on branch 'master'."
-	exit 0
+	echo "Aborting sync since we're not on branch 'master'. Run --force to sync anyways."
+	exit 1
 fi
 
 # Grab our config
