@@ -1,15 +1,16 @@
-conf-sync
-===================
+# conf-utils
+A collection of IRCd configuration management tools used by OVERdrive-IRC.
 
+## conf-sync (scripts/sync.sh, scripts/sync-motd.sh)
 conf-sync is an SCP-based IRCd configuration syncer used by the OVERdrive-IRC network.
-It currently targets InspIRCd 2.0.x.
+It currently targets InspIRCd 2.0.x, but can theoretically support any IRCd using a file-based configuration.
 
-## Instructions
+### Instructions
 First, configure your instance by renaming `scripts/config.sh.example` to `scripts/config.sh`.
 
 Configuration files go in the root directory of the repository. By default, the following files
 are merged in this order as `~/inspircd/etc/inspircd.conf` on target servers
-(yes, this strays from the default paths, so pay attention!):
+(yes, this strays from the default paths):
 
  * global.conf
  * `<servername>`.links.conf
@@ -30,13 +31,18 @@ and `ircd.rules` in the target directory.
 All scripts **require passwordless SSH access**, so you will need to run
 them from a machine that has SSH access to the target servers.
 
-### Extra Utilities
+## makelink
 
-conf-sync also bundles a few scripts that may help server management:
-
-* **scripts/makelink.py**: a link block generator between servers.
+**scripts/makelink.py** provides a link block generator between servers.
    - Usage: `scripts/makelink.py <server1> <server2> [<server3> ...]`
-* **scripts/passwd.py**: random password generator.
+
+If `serverX.links.conf` and `serverX.links.conf` are both present (for each
+server name specified), adn the fields are in the right format (InspIRCd XML),
+makelink will automatically write link blocks between the servers chosen.
+
+## passwd
+
+**scripts/passwd.py** provides a simple random password generator.
    - Usage: `scripts/passwd.py [<passwordlength>]`
    - If `<passwordlength>` is not specified, it defaults to 16.
 
