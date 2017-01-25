@@ -23,9 +23,9 @@ are merged in this order as `~/inspircd/etc/inspircd.conf` on target servers
  * alias.conf
  * dnsbl.conf
 
-Once you're done changing things, run `scripts/git-sync.sh` to push your changes.
+Once you're done changing things, run `scripts/sync.sh` to push your changes.
 You will have to run rehash your servers manually after for them to take effect.
-MOTD syncing is done via `scripts/motd.sh`, which will write `<servername>.motd`
+MOTD syncing is done via `scripts/sync-motd.sh`, which will write `<servername>.motd`
 and `ircd.rules` in the target directory.
 
 All scripts **require passwordless SSH access**, so you will need to run
