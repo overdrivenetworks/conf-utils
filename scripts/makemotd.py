@@ -6,9 +6,19 @@ MOTD Generator for OVERdrive-IRC.
 # Configuration values
 default_location = 'Earth'
 default_owner = 'GLolol'
+dbname = 'motd.db'
 
 import re
 import sys
+import json
+
+try:
+    with open(dbname) as f:
+        db = json.load(f)
+except OSError:
+    db = {}
+print('Retrived DB from %s' % dbname)
+print()
 
 def gethostname(server):
     try:  # Try to get server hostname from the serverinfo.conf
@@ -26,9 +36,13 @@ def makemotd(server):
     print("Output path set to %s" % fname)
     
     # Prepare all our input fields.
+    serverkey = db.get(server, {})
+    if serverkey:
+        print('Got existing serverdata: %s' % serverkey)
     args = {'servername': gethostname(server),
-            'ops': input("Who should be listed as the server operator(s)? ").strip() or default_owner,
-            'location': input("Where is this server located? ").strip() or default_location}
+            'ops': serverkey.get('ops') or input("Who should be listed as the server operator(s)? ").strip() or default_owner,
+            'location': serverkey.get('location') or input("Where is this server located? ").strip() or default_location}
+    db[server] = args
     
     try:
         # Read our MOTD template.
@@ -53,3 +67,7 @@ if __name__ == '__main__':
     # Iterate over command line arguments (each is a server name)
     for sname in sys.argv[1:]:
         makemotd(sname)
+
+    print('Writing DB to %s' % dbname)
+    with open(dbname, 'w') as f:
+        json.dump(db, f)
