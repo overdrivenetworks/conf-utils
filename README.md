@@ -24,7 +24,7 @@ are merged in this order as `~/inspircd/etc/inspircd.conf` on target servers
  * dnsbl.conf
 
 Once you're done changing things, run `scripts/sync.sh` to push your changes.
-You will have to run rehash your servers manually after for them to take effect.
+You will have to run rehash on your servers manually, for them to take effect.
 MOTD syncing is done via `scripts/sync-motd.sh`, which will write `<servername>.motd`
 and `ircd.rules` in the target directory.
 
@@ -37,7 +37,7 @@ them from a machine that has SSH access to the target servers.
    - Usage: `scripts/makelink.py <server1> <server2> [<server3> ...]`
 
 If `serverX.links.conf` and `serverX.links.conf` are both present (for each
-server name specified), adn the fields are in the right format (InspIRCd XML),
+server name specified), and the fields are in the right format (InspIRCd XML),
 makelink will automatically write link blocks between the servers chosen.
 
 ## passwd
