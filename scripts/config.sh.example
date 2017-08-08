@@ -16,7 +16,7 @@ getconfig () {
 }
 
 # Sets the target conf dir for remote servers (where we will push our configs).
-export targetpath="~/inspircd/etc/"
+export targetpath="~/inspircd/etc"
 
 # Declare any servers and options here. You can use SSH custom ports, etc. for example.
 declare -A options=([server1]="-P 12345")
