@@ -18,9 +18,18 @@ fi
 
 mkdir -p "$tmpfolder"
 
+default_targetpath="$targetpath"
+
 csync () {
 	# XXX: make this configurable, but in a backwards-compatible fashion
 	targetfile="inspircd.conf"
+
+	# Support server-specific paths if defined.
+	if [[ ! -z "${targetpaths[$1]}" ]]; then
+		targetpath="${targetpaths[$1]}"
+	else
+		targetpath="$default_targetpath"
+	fi
 
 	echo "Sync: $targetfile @ $1"
 	_TMPFILE="$tmpfolder/$1.conf"
