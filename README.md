@@ -9,8 +9,7 @@ It currently targets InspIRCd 2.0.x, but can theoretically support any IRCd usin
 First, configure your instance by renaming `scripts/config.sh.example` to `scripts/config.sh`.
 
 Configuration files go in the root directory of the repository. By default, the following files
-are merged in this order as `~/inspircd/etc/inspircd.conf` on target servers
-(yes, this strays from the default paths):
+are merged in this order as `~/inspircd/run/conf/inspircd.conf` on target servers:
 
  * global.conf
  * `<servername>`.links.conf
