@@ -5,15 +5,18 @@
 getconfig () {
   # Concatenate files together in the following order:
   cat global.conf
+  cat $1.modules.conf
   cat modules.conf
   cat $1.links.conf
   cat cgiirc.conf
+  cat globalbans.conf
   cat auth-ex.conf
   cat opers.conf
   cat $1.serverinfo.conf
   cat helpop.conf
   cat alias.conf
   cat dnsbl.conf
+  cat filter.conf
 }
 
 # Sets the target conf dir for remote servers (where we will push our configs).

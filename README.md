@@ -12,15 +12,18 @@ Configuration files go in the root directory of the repository. By default, the 
 are merged in this order as `~/inspircd/run/conf/inspircd.conf` on target servers:
 
  * global.conf
- * `<servername>`.links.conf
- * opers.conf
+ * `<servername>`.modules.conf
  * modules.conf
- * `<servername>`.serverinfo.conf
+ * `<servername>`.links.conf
  * cgiirc.conf
+ * globalbans.conf
  * auth-ex.conf
+ * opers.conf
+ * `<servername>`.serverinfo.conf
  * helpop.conf
  * alias.conf
  * dnsbl.conf
+ * filter.conf
 
 Once you're done changing things, run `scripts/sync.sh` to push your changes.
 You will have to run rehash on your servers manually, for them to take effect.
