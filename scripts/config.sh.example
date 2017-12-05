@@ -26,8 +26,5 @@ declare -A servers=([server1]="ircd@server1.somenet.net" [server2]="username@ser
 # Declare any options for scp here, such as custom SSH ports
 declare -A options=([server1]="-P 12345")
 
-# Server specific scp options
-declare -A options=([io]="-P 4547")
-
 # Server specific target paths
 declare -A targetpaths=([someserver]="/usr/local/etc/inspircd/inspircd.conf")
