@@ -15,8 +15,26 @@ import passwd
 servers = sys.argv[1:]
 curdir = os.path.dirname(os.path.abspath(__file__))
 
-def getip(server):
+DEFAULT_TLS_METHOD = 'gnutls'
+def _get_tls_mech(server):
+    try:
+        with open('%s.modules.conf' % server) as f:
+            modulesdata = f.read()
+    except OSError:
+        print("warn: %s.modules.conf missing! Falling back to using 'gnutls' for links." % server)
+        return DEFAULT_TLS_METHOD
 
+    if 'm_ssl_openssl' in modulesdata:
+        print("debug: using ssl='openssl' for %s" % server)
+        return 'openssl'
+    elif 'm_ssl_gnutls' in modulesdata:
+        print("debug: using ssl='gnutls' for %s" % server)
+        return 'gnutls'
+    else:
+        print("warn: Failed to detect either 'openssl' or 'gnutls' for encryption. Falling back to 'gnutls'")
+        return DEFAULT_TLS_METHOD
+
+def getip(server):
     # Try to grab the hostname and IP of the server from the relevant xyz.serverinfo.conf.
     try:
         with open('%s.serverinfo.conf' % server) as f:
@@ -34,7 +52,6 @@ def getip(server):
         # Couldn't read the serverinfo.conf file, try resolving the hostname instead.
         hostname = '%s.%s' % (server, serversuffix)
         print("debug: Failed to find hostname for %s, using default value of %s instead..." % (server, hostname))
-
 
     try:  # Ditto with the IP address.
         bind = re.search(r'\<bind address="([0-9\.]+)"', data)
@@ -61,19 +78,20 @@ def getip(server):
                     break
     return (ip, hostname)
 
-def linkblock(targetserver, password):
+def linkblock(targetserver, password, sourceserver):
     s = """
 <link name="{hostname}"
     ipaddr="{serverip}"
     allowmask="{serverip}"
     port="7001"
     timeout="300"
-    ssl="gnutls"
+    ssl="{tls_method}"
     statshidden="no"
     hidden="no"
     sendpass="{password}"
     recvpass="{password}">
-""".format(password=password, hostname=serverips[targetserver][1], serverip=serverips[targetserver][0])
+""".format(password=password, hostname=serverips[targetserver][1], serverip=serverips[targetserver][0],
+           tls_method=_get_tls_mech(sourceserver))
     return s
 
 
@@ -98,14 +116,14 @@ if __name__ == '__main__':
         source, target = serverpair
         password = passwd.passwd(50)
         print('Adding to %s.links.conf:' % source)
-        L = linkblock(target, password)
+        L = linkblock(target, password, source)
         print(L)
         with open('%s.links.conf' % source, 'a') as f:
             f.write(L)
-        # Add the reverse too. The reason we don't use permutations()
-        # is so the password pair stays the same.
+
+        # Add the reverse too.
         print('Adding to %s.links.conf:' % target)
-        L = linkblock(source, password)
+        L = linkblock(source, password, target)
         print(L)
         with open('%s.links.conf' % target, 'a') as f:
             f.write(L)
