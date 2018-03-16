@@ -43,6 +43,9 @@ def getip(server):
         print("debug: %s.serverinfo.conf missing!" % server)
         data = ''
 
+    real_hostname = '%s.%s' % (server, serversuffix)
+
+    hostname = real_hostname
     try:
         # In this case, we only want what looks like IPv4 addresses.
         hostname = re.search(r'\<server name="(.+?)"', data)
@@ -50,8 +53,7 @@ def getip(server):
         print("debug: hostname for %s found: %s" % (server, hostname))
     except AttributeError:
         # Couldn't read the serverinfo.conf file, try resolving the hostname instead.
-        hostname = '%s.%s' % (server, serversuffix)
-        print("debug: Failed to find hostname for %s, using default value of %s instead..." % (server, hostname))
+        print("debug: Failed to find hostname for %s, using default value of %s instead..." % (server, real_hostname))
 
     try:  # Ditto with the IP address.
         bind = re.search(r'\<bind address="([0-9\.]+)"', data)
@@ -59,23 +61,30 @@ def getip(server):
         print("debug: IP for %s found: %s" % (server, ip))
     except AttributeError:
         # That didn't work (probably because we're using a wildcard bind for the server)
-        # So, try resolving the hostname we found.
+        # So, try resolving one of that two hostnames we found.
         try:
             ip = socket.gethostbyname(hostname)
-            print("debug: IP for %s found (by resolving hostname %s): %s" % (server, hostname, ip))
         except socket.error:
-            # That failed too. Ask for input.
-            while True:
-                try:
-                    ip = input('Failed to get the server IP for server [%s]; type in the IP manually: ' % server)
-                    ipaddress.ip_address(ip)
-                except ValueError:
-                    print('Invalid IP address!')
-                except KeyboardInterrupt:
-                    print('Aborted.')
-                    sys.exit(3)
-                else:
-                    break
+            try:
+                # Also try the server's hostname instead of the IRCd name (this won't work for closed hub servers)
+                ip = socket.gethostbyname(real_hostname)
+            except socket.error:
+                # Fallback to asking for input if nothing works.
+                while True:
+                    try:
+                        ip = input('Failed to get the server IP for server [%s]; type in the IP manually: ' % server)
+                        ipaddress.ip_address(ip)
+                    except ValueError:
+                        print('Invalid IP address!')
+                    except KeyboardInterrupt:
+                        print('Aborted.')
+                        sys.exit(3)
+                    else:
+                        break
+            else:
+                print("debug: IP for %s found (by resolving hostname %s): %s" % (server, real_hostname, ip))
+        else:
+            print("debug: IP for %s found (by resolving hostname %s): %s" % (server, hostname, ip))
     return (ip, hostname)
 
 def linkblock(targetserver, password, sourceserver):
