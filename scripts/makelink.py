@@ -35,6 +35,9 @@ def _get_tls_mech(server):
         return DEFAULT_TLS_METHOD
 
 def getip(server):
+    """
+    Fetches the IP address and IRCd hostname of a server and returns it in a tuple: (IP, hostname)
+    """
     # Try to grab the hostname and IP of the server from the relevant xyz.serverinfo.conf.
     try:
         with open('%s.serverinfo.conf' % server) as f:
@@ -78,7 +81,7 @@ def getip(server):
                         print('Invalid IP address!')
                     except KeyboardInterrupt:
                         print('Aborted.')
-                        sys.exit(3)
+                        sys.exit(1)
                     else:
                         break
             else:
@@ -103,25 +106,41 @@ def linkblock(targetserver, password, sourceserver):
            tls_method=_get_tls_mech(sourceserver))
     return s
 
-
-if not servers:
-    print('Error: No servers specified!')
-    p = os.path.basename(__file__)
-    print('%s is a quick script to generate link blocks between servers.' % p)
-    print('usage: %s <server1> <server2> [<server3> ...]' % p)
-    sys.exit(1)
-
 serverips = {}
-for server in map(str.lower, servers):
-    if not os.path.isfile('%s.links.conf' % server):
-        print('Error: No such config file %s.links.conf' % server)
-        sys.exit(2)
-    serverips[server] = getip(server)
 
 if __name__ == '__main__':
     print("Server IP index: %s" % serverips)
     print()
-    for serverpair in itertools.combinations(servers, 2):
+
+    import argparse
+    parser = argparse.ArgumentParser(description='link block generator tool for InspIRCd 2.0')
+    parser.add_argument('servers', help='specifies the server names to make a link block for', nargs='*')
+    parser.add_argument("--override", "-o", help="forces the hostname and IP for a server to given values: "
+                                                 "takes the form --serverip shortservername,IP.address,ircd.hostname",
+                        action='append', default=[])
+    args = parser.parse_args()
+
+    if len(args.servers) < 2:
+        print('ERROR: need at least two servers to create link blocks', file=sys.stderr)
+        sys.exit(1)
+
+    forced_serverips = {}
+    for entry in args.override:
+        servername, ip, host = entry.lower().split(',', 2)
+        forced_serverips[servername] = (ip, host)
+    if forced_serverips:
+        print("Forcing the following IPs/hosts: %s" % forced_serverips)
+
+    for server in map(str.lower, args.servers):
+        if server in forced_serverips:
+            serverips[server] = forced_serverips[server]
+        else:
+            if not os.path.isfile('%s.links.conf' % server):
+                print('Error: No such config file %s.links.conf' % server)
+                sys.exit(1)
+            serverips[server] = getip(server)
+
+    for serverpair in itertools.combinations(args.servers, 2):
         source, target = serverpair
         password = passwd.passwd(50)
         print('Adding to %s.links.conf:' % source)
