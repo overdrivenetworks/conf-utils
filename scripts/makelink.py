@@ -34,7 +34,9 @@ def _get_tls_mech(server):
         print("warn: Failed to detect either 'openssl' or 'gnutls' for encryption. Falling back to 'gnutls'")
         return DEFAULT_TLS_METHOD
 
-def getip(server):
+IPV4_REGEX = r'\<bind address="([0-9\.]+)"'
+IPV6_REGEX = r'\<bind address="([0-9a-f:]+)"'
+def _get_ip_and_ircd_name(server, ipv6=False):
     """
     Fetches the IP address and IRCd hostname of a server and returns it in a tuple: (IP, hostname)
     """
@@ -48,9 +50,11 @@ def getip(server):
 
     real_hostname = '%s.%s' % (server, serversuffix)
 
+    family = socket.AF_INET6 if ipv6 else socket.AF_INET
+
     hostname = real_hostname
     try:
-        # In this case, we only want what looks like IPv4 addresses.
+        # Try to grab the server hostname
         hostname = re.search(r'\<server name="(.+?)"', data)
         hostname = hostname.group(1)
         print("debug: hostname for %s found: %s" % (server, hostname))
@@ -58,24 +62,25 @@ def getip(server):
         # Couldn't read the serverinfo.conf file, try resolving the hostname instead.
         print("debug: Failed to find hostname for %s, using default value of %s instead..." % (server, real_hostname))
 
-    try:  # Ditto with the IP address.
-        bind = re.search(r'\<bind address="([0-9\.]+)"', data)
+    try:
+        # Ditto with the IP address.
+        bind = re.search(IPV6_REGEX if ipv6 else IPV4_REGEX, data)
         ip = bind.group(1)
         print("debug: IP for %s found: %s" % (server, ip))
     except AttributeError:
         # That didn't work (probably because we're using a wildcard bind for the server)
         # So, try resolving one of that two hostnames we found.
         try:
-            ip = socket.gethostbyname(hostname)
-        except socket.error:
+            ip = socket.getaddrinfo(hostname, None, family=family)[0][4][0]
+        except (socket.error, IndexError):
             try:
                 # Also try the server's hostname instead of the IRCd name (this won't work for closed hub servers)
-                ip = socket.gethostbyname(real_hostname)
-            except socket.error:
+                ip = socket.getaddrinfo(real_hostname, None, family=family)[0][4][0]
+            except (socket.error, IndexError):
                 # Fallback to asking for input if nothing works.
                 while True:
                     try:
-                        ip = input('Failed to get the server IP for server [%s]; type in the IP manually: ' % server)
+                        ip = input('Failed to get the server IP for server [%s]; type in the IPv%s address manually: ' % (server, '6' if ipv6 else '4'))
                         ipaddress.ip_address(ip)
                     except ValueError:
                         print('Invalid IP address!')
@@ -115,6 +120,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='link block generator tool for InspIRCd 2.0')
     parser.add_argument('servers', help='specifies the server names to make a link block for', nargs='*')
+    parser.add_argument("--ipv6", "-6", help="forces IPv6 for a link block", action='store_true')
     parser.add_argument("--override", "-o", help="forces the hostname and IP for a server to given values: "
                                                  "takes the form --serverip shortservername,IP.address,ircd.hostname",
                         action='append', default=[])
@@ -138,7 +144,7 @@ if __name__ == '__main__':
             if not os.path.isfile('%s.links.conf' % server):
                 print('Error: No such config file %s.links.conf' % server)
                 sys.exit(1)
-            serverips[server] = getip(server)
+            serverips[server] = _get_ip_and_ircd_name(server, ipv6=args.ipv6)
 
     for serverpair in itertools.combinations(args.servers, 2):
         source, target = serverpair
