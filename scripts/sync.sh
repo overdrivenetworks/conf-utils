@@ -38,7 +38,7 @@ csync () {
 	# Write the config file to a temporary file.
 	getconfig "$1" > "$_TMPFILE"
 
-	echo "Transfering $_TMPFILE => $_REAL_TARGETFILE"
+	echo "Transferring $_TMPFILE => $_REAL_TARGETFILE"
 	# shellcheck disable=SC2086
 	# options are purposely designed be word-split
 	scp ${options[$1]} "$_TMPFILE" "$_REAL_TARGETFILE"
