@@ -11,7 +11,6 @@
          Website: \x1fhttps://ircnet.overdrivenetworks.com/\x1f
   Current Server: \x1f\x02%(servername)s\x02\x1f
         Location: %(location)s
-Server Operators: %(ops)s
            Ports: 6667-6669, 9998 (plain) / +6697-6699, +9999 (SSL)
 
 \x02+- \x1fChannels of Interest\x1f\x02

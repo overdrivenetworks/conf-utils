@@ -5,7 +5,6 @@ MOTD Generator for OVERdrive-IRC.
 
 # Configuration values
 default_location = 'Earth'
-default_owner = 'GLolol'
 dbname = 'motd.db'
 
 import re
@@ -40,7 +39,6 @@ def makemotd(server):
     if serverkey:
         print('Got existing serverdata: %s' % serverkey)
     args = {'servername': gethostname(server),
-            'ops': serverkey.get('ops') or input("Who should be listed as the server operator(s)? ").strip() or default_owner,
             'location': serverkey.get('location') or input("Where is this server located? ").strip() or default_location}
     db[server] = args
     
