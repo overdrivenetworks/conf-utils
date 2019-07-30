@@ -1,10 +1,15 @@
 #!/bin/bash
 # A frontend to certbot for managing IRC RR TLS certificates.
 
-cd "${0%/*}"  # cd to script dir
+error() {
+    echo "ERROR: $*"
+    exit 1
+}
 
-. ../scripts/config.sh || { echo "ERROR: Could not find config.sh"; exit 1; }
-. certpush.config.sh || { echo "ERROR: Could not find certpush.config.sh"; exit 1; }
+cd "${0%/*}" || { error "Could not cd to script dir"; }
+
+. ../scripts/config.sh || { error "Could not find config.sh"; }
+. certpush.config.sh || { error "Could not find certpush.config.sh"; }
 
 if [[ "$TEST_MODE" == true ]]; then
     CERTBOT_BASE_ARGS+=(--test-cert)
@@ -30,14 +35,14 @@ newserver() {
     done
 
     certbot_args+=("-d" "$server_hosts")
-    echo "Will call certbot with args: ${certbot_args[@]}"
-    ${certbot_args[@]}
+    echo "Will call certbot with args: ${certbot_args[*]}"
+    eval "${certbot_args[@]}"
 }
 
 renew() {
     certbot_args=("${CERTBOT_BASE_ARGS[@]}" "renew" "--reuse-key")
-    echo "Will call certbot with args: ${certbot_args[@]}"
-    ${certbot_args[@]}
+    echo "Will call certbot with args: ${certbot_args[*]}"
+    eval "${certbot_args[@]}"
 }
 
 push() {
@@ -47,8 +52,8 @@ push() {
     fi
 	target_path="$(getpath "$1")"
 
-    certfile="$(readlink -f $CONFIG_DIR/live/$1/fullchain.pem)"
-    keyfile="$(readlink -f $CONFIG_DIR/live/$1/privkey.pem)"
+    certfile="$(readlink -f "$CONFIG_DIR/live/$1/fullchain.pem")"
+    keyfile="$(readlink -f "$CONFIG_DIR/live/$1/privkey.pem")"
     echo
     if [[ -z "$certfile" || -z "$keyfile" ]]; then
         echo "Certfile or keyfile missing for server $1!"
@@ -71,11 +76,6 @@ push_all() {
     for server in "${!CERTPUSH_SERVERS[@]}"; do
         push "$server"
     done
-}
-
-error() {
-    echo "ERROR: $@"
-    exit 1
 }
 
 print_usage() {
@@ -107,7 +107,7 @@ elif [[ "$CMD" == "renew" ]]; then
 elif [[ "$CMD" == "runcmd" ]]; then
     shift
     certbot_args=("${CERTBOT_BASE_ARGS[@]}" "$@")
-    ${certbot_args[@]}
+    eval "${certbot_args[@]}"
 
 elif [[ "$CMD" == "push" ]]; then
     if [[ -n "$TARGET" ]]; then
