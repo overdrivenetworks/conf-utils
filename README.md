@@ -42,9 +42,3 @@ them from a machine that has SSH access to the target servers.
 If `serverX.links.conf` and `serverX.links.conf` are both present (for each
 server name specified), and the fields are in the InspIRCd XML format,
 makelink will automatically write link blocks between the servers given.
-
-## passwd
-
-**scripts/passwd.py** provides a simple random password generator.
-   - Usage: `scripts/passwd.py [<passwordlength>]`
-   - If `<passwordlength>` is not specified, it defaults to 16.
