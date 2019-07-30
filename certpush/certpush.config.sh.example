@@ -1,0 +1,23 @@
+!#/bin/bash
+# Rename this to certpush.config.sh!
+
+declare -A CERTPUSH_SERVERS
+
+# List of DNS names to push to each server - addresses for each server are comma separated
+CERTPUSH_SERVERS=([server1]="server1.yournet.com,server1.yournet.net"
+                  [server2]="server2.example.com")
+
+# List of DNS names to add to all servers (Round robin addresses)
+POOL_NAMES=("irc.yournet.com irc.yournet.net)
+
+# Certbot base arguments. By default this sets config, work, and log dirs to under the certpush
+# directory, so that you don't need root to use certbot.
+CONFIG_DIR=./certbot-config
+CERTBOT_BASE_ARGS=(certbot --config-dir "$CONFIG_DIR" --work-dir ./workdir --logs-dir ./log)
+
+# If enabled, tells certbot to fetch from the staging server
+TEST_MODE=false
+
+# Sets the authentication method - this example uses the Cloudflare DNS plugin
+AUTH_METHOD=(--dns-cloudflare --dns-cloudflare-credentials ~/cloudflare-credentials.ini)
+

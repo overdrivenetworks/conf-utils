@@ -1,0 +1,6 @@
+workdir/
+log/
+certbot-config/
+*.bak
+*.old
+
