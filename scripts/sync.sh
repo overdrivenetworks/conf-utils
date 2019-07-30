@@ -1,39 +1,20 @@
 #!/bin/bash
-if [[ "$(git symbolic-ref --short -q HEAD)" != master ]] && [[ $1 != "force" ]]; then
-	echo "Aborting sync since we're not on branch 'master'. Run --force to sync anyways."
-	exit 1
-fi
-
 # Grab our config
 . scripts/config.sh
 
-if [[ -z "$tmpfolder" ]]; then
-	tmpfolder="tmp"
+if [[ -z "$TMPDIR" ]]; then
+	TMPDIR="tmp"
 fi
 
-if [[ -z "$targetpath" ]]; then
-	echo "No target path specified in conf?"
-	exit 1
-fi
-
-mkdir -p "$tmpfolder"
-
-default_targetpath="$targetpath"
+mkdir -p "$TMPDIR"
 
 csync () {
-	# XXX: make this configurable, but in a backwards-compatible fashion
-	targetfile="inspircd.conf"
-
 	# Support server-specific paths if defined.
-	if [[ ! -z "${targetpaths[$1]}" ]]; then
-		targetpath="${targetpaths[$1]}"
-	else
-		targetpath="$default_targetpath"
-	fi
+	TARGET_PATH="$(getpath "$1")"
 
-	echo "Sync: $targetfile @ $1"
-	_TMPFILE="$tmpfolder/$1.conf"
-	_REAL_TARGETFILE="${servers[$1]}:${targetpath}/${targetfile}"
+	echo "Sync: $TARGET_FILE @ $1"
+	_TMPFILE="$TMPDIR/$1.conf"
+	_REAL_TARGETFILE="${SERVERS[$1]}:${TARGET_PATH}/${TARGET_FILE}"
 
 	# Write the config file to a temporary file.
 	getconfig "$1" > "$_TMPFILE"
@@ -41,15 +22,20 @@ csync () {
 	echo "Transferring $_TMPFILE => $_REAL_TARGETFILE"
 	# shellcheck disable=SC2086
 	# options are purposely designed be word-split
-	scp ${options[$1]} "$_TMPFILE" "$_REAL_TARGETFILE"
+	scp ${OPTIONS[$1]} "$_TMPFILE" "$_REAL_TARGETFILE"
 	rm "$_TMPFILE"
 }
 
-if [[ -z $1 ]]; then
-	for server in "${!servers[@]}"
+declare -A pids
+if [[ -z "$1" ]]; then
+	for server in "${!SERVERS[@]}"
 	do
-		csync "$server"
+		csync "$server" &
+		pids["$server"]="$!"
 		echo ""
+	done
+	for pid in "${pids[@]}"; do
+		wait "$pid"
 	done
 else
 	csync "$1"

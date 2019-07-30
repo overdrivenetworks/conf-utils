@@ -3,30 +3,30 @@
 # Grab our config
 . scripts/config.sh
 
-default_targetpath="$targetpath"
+default_TARGET_PATH="$TARGET_PATH"
 
 motdsync () {
 	# Support server-specific paths if defined.
-	if [[ ! -z "${targetpaths[$1]}" ]]; then
-		targetpath="${targetpaths[$1]}"
+	if [[ ! -z "${TARGET_PATHS[$1]}" ]]; then
+		TARGET_PATH="${TARGET_PATHS[$1]}"
 	else
-		targetpath="$default_targetpath"
+		TARGET_PATH="$DEFAULT_TARGET_PATH"
 	fi
 
 	echo "Sync MOTD: $1"
 
-	echo "    $1.motd => ${targetpath}/ircd.motd"
+	echo "    $1.motd => ${TARGET_PATH}/ircd.motd"
 	# shellcheck disable=SC2086
 	# options are purposely designed be word-split
-	scp ${options[$1]} "$1.motd" "${servers[$1]}:${targetpath}/ircd.motd"
+	scp ${OPTIONS[$1]} "$1.motd" "${SERVERS[$1]}:${TARGET_PATH}/ircd.motd"
 
-	echo "    ircd.rules => ${targetpath}/ircd.rules"
+	echo "    ircd.rules => ${TARGET_PATH}/ircd.rules"
 	# shellcheck disable=SC2086
-	scp ${options[$1]} ircd.rules "${servers[$1]}:${targetpath}/ircd.rules"
+	scp ${OPTIONS[$1]} ircd.rules "${SERVERS[$1]}:${TARGET_PATH}/ircd.rules"
 }
 
 if [[ -z "$1" ]]; then
-	for server in "${!servers[@]}"
+	for server in "${!SERVERS[@]}"
 	do
 		motdsync "$server"
 		echo ""

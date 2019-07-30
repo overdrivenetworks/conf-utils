@@ -17,6 +17,7 @@ are merged in this order as `~/inspircd/run/conf/inspircd.conf` on target server
  * `<servername>`.links.conf
  * cgiirc.conf
  * globalbans.conf
+ * `<servername>`.auth-ex.conf
  * auth-ex.conf
  * opers.conf
  * `<servername>`.serverinfo.conf

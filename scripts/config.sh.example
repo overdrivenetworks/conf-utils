@@ -1,18 +1,19 @@
-#!/bin/bash
 # This defines the order that files in the root directory will be processed:
 # $1 refers to the server name.
 # You will need to change this if you use a different configuration style on your network.
 getconfig () {
   # Concatenate files together in the following order:
   cat global.conf
-  cat $1.modules.conf
+  cat "$1.modules.conf"
   cat modules.conf
-  cat $1.links.conf
+  cat "$1.links.conf"
   cat cgiirc.conf
-  cat globalbans.conf
+  if [[ -f "$1.auth-ex.conf" ]]; then
+    cat "$1.auth-ex.conf"
+  fi
   cat auth-ex.conf
   cat opers.conf
-  cat $1.serverinfo.conf
+  cat "$1.serverinfo.conf"
   cat helpop.conf
   cat alias.conf
   cat dnsbl.conf
@@ -20,14 +21,25 @@ getconfig () {
 }
 
 # Sets the target conf dir for remote servers (where we will push our configs).
-# This is the DEFAULT path, which can be overridden by targetpaths below.
-export targetpath="~/inspircd/run/conf"
-
+# This is the DEFAULT path, which can be overridden by TARGET_PATHS below.
+export DEFAULT_TARGETPATH="~/inspircd/etc"
+export TARGET_FILE="inspircd.conf"
 # Target hosts to connect to
-declare -A servers=([server1]="ircd@server1.somenet.net" [server2]="username@server2.yournet.net")
+declare -A SERVERS=([server1]="ircd@server1.somenet.net" [server2]="username@server2.yournet.net")
 
-# Declare any options for scp here, such as custom SSH ports
-declare -A options=([server1]="-P 12345")
+# Server specific scp options
+declare -A OPTIONS=()
 
 # Server specific target paths
-declare -A targetpaths=([someserver]="/usr/local/etc/inspircd/inspircd.conf")
+declare -A TARGET_PATHS=([server1]="/usr/local/etc/inspircd/inspircd.conf")
+
+
+getpath () {
+	# Support server-specific paths if defined.
+	if [[ ! -z "${TARGET_PATHS[$1]}" ]]; then
+		target_path="${TARGET_PATHS[$1]}"
+	else
+		target_path="$DEFAULT_TARGETPATH"
+	fi
+	echo "$target_path"
+}
