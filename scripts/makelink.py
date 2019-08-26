@@ -9,11 +9,15 @@ import itertools
 import re
 import socket
 import ipaddress
-
-import passwd
+import string
+import secrets  # py3.6+
 
 servers = sys.argv[1:]
 curdir = os.path.dirname(os.path.abspath(__file__))
+
+def make_password(length):
+    password = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(length))
+    return password
 
 DEFAULT_TLS_METHOD = 'gnutls'
 def _get_tls_mech(server):
@@ -148,7 +152,7 @@ if __name__ == '__main__':
 
     for serverpair in itertools.combinations(args.servers, 2):
         source, target = serverpair
-        password = passwd.passwd(50)
+        password = make_password(50)
         print('Adding to %s.links.conf:' % source)
         L = linkblock(target, password, source)
         print(L)
