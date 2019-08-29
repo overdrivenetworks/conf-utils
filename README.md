@@ -22,7 +22,7 @@ Usage:
 
 ## conf-sync (scripts/sync.sh, scripts/sync-motd.sh)
 conf-sync is a simple scp-based IRCd configuration manager.
-It currently targets InspIRCd 2.0.x, but can theoretically support any IRCd using a file-based configuration.
+It currently targets InspIRCd 2.0.x / 3.x, but can theoretically support any IRCd using a file-based configuration.
 
 ### Instructions
 First, configure your instance by renaming `scripts/config.sh.example` to `scripts/config.sh`.
