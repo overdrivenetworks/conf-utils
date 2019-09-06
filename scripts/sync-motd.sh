@@ -3,15 +3,9 @@
 # Grab our config
 . scripts/config.sh
 
-default_TARGET_PATH="$TARGET_PATH"
-
 motdsync () {
 	# Support server-specific paths if defined.
-	if [[ ! -z "${TARGET_PATHS[$1]}" ]]; then
-		TARGET_PATH="${TARGET_PATHS[$1]}"
-	else
-		TARGET_PATH="$DEFAULT_TARGET_PATH"
-	fi
+	TARGET_PATH="$(getpath "$1")"
 
 	echo "Sync MOTD: $1"
 
