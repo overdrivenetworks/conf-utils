@@ -1,7 +1,7 @@
 # conf-utils
 A collection of IRCd configuration management tools used by OVERdrive-IRC.
 
-## certpush [beta]
+## certpush
 
 Certpush is a utility that generates Let's Encrypt TLS certificates for IRC servers. It uses rootless certbot with DNS validation as its backend, creating a unique certificate for every server. Each certificate is only valid for that server's name(s) plus configured round robin addresses, allowing granular certificate revocation / removal compared to sharing certificates between servers.
 
@@ -18,11 +18,11 @@ Usage:
 ./certpush.sh runcmd [command] [args] - run arbitrary certbot commands under certpush's config directories
 ```
 
-[beta] `certpush.sh renew` can be safely crontabbed to ensure that certificates are kept up to date.
+`certpush.sh renew` can be safely crontabbed to ensure that certificates are kept up to date.
 
 ## conf-sync (scripts/sync.sh, scripts/sync-motd.sh)
 conf-sync is a simple scp-based IRCd configuration manager.
-It currently targets InspIRCd 2.0.x / 3.x, but can theoretically support any IRCd using a file-based configuration.
+It currently targets InspIRCd 3.x, but can theoretically support any IRCd using a file-based configuration.
 
 ### Instructions
 First, configure your instance by renaming `scripts/config.sh.example` to `scripts/config.sh`.
@@ -48,7 +48,7 @@ are merged in this order as `~/inspircd/run/conf/inspircd.conf` on target server
 Once you're done changing things, run `scripts/sync.sh` to push your changes.
 You will have to run rehash your servers manually for changes to take effect.
 MOTD syncing is done via `scripts/sync-motd.sh`, which will write `<servername>.motd`
-and `ircd.rules` in the target directory.
+in the target directory.
 
 All scripts **require passwordless SSH access** for scp, so you will need to run
 them from a machine that has SSH access to the target servers.
